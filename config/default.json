@@ -1,0 +1,22 @@
+{
+  "App": {
+    "db": {
+      "connectionString": ""
+    },
+    "resources": {
+      "aws": {
+        "credentials": {
+          "token": "",
+          "secret": ""
+        },
+        "services": {
+          "S3": {
+            "baseUrl": "",
+            "region": "",
+            "bucket": ""
+          }
+        }
+      }
+    }
+  }
+}

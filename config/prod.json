@@ -1,0 +1,7 @@
+{
+  "App": {
+    "db": {
+      "connectionString": "test-mongo-connection-prod"
+    }
+  }
+}
