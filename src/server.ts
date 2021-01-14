@@ -1,7 +1,7 @@
+import fs from 'fs'
 import { Server } from '@overnightjs/core'
 import bodyParser from 'body-parser'
 import { Application } from 'express'
-import { TestController } from './controllers/test'
 import './util/module-alias'
 
 export class SetupServer extends Server {
@@ -13,14 +13,27 @@ export class SetupServer extends Server {
     this.app.use(bodyParser.json())
   }
 
-  private setupControllers(): void {
-    const testController = new TestController()
-    this.addControllers([testController])
+  private async setupControllers(): Promise<void> {
+    let controllers = fs.readdirSync('./src/controllers')
+
+    controllers = controllers
+      .filter((ctr) => !ctr.startsWith('__') && ctr.endsWith('.ts'))
+      .map((ctr) => ctr.replace('.ts', ''))
+
+    for (const controller of controllers) {
+      const controllerFile = await import(`@src/controllers/${controller}`)
+
+      Object.keys(controllerFile)
+        .filter((elem) => elem.includes('Controller'))
+        .forEach((controllerName) => {
+          this.addControllers(new controllerFile[controllerName]())
+        })
+    }
   }
 
-  public init(): void {
+  public async init(): Promise<void> {
     this.setupExpress()
-    this.setupControllers()
+    await this.setupControllers()
   }
 
   public getApp(): Application {

@@ -1,11 +1,19 @@
 import { Controller, Get } from '@overnightjs/core'
 import { Request, Response } from 'express'
-import * as HTTPRequest from '@src/util/request'
+import { GitHubClient } from '@src/clients/github'
+import { GitHubService } from '@src/services/github'
+
+interface GetGitHubUserParams {
+  id: string
+}
 
 @Controller('github')
-export class TestController {
+export class GitHubController {
+  constructor(protected githubClient = new GitHubClient()) {}
+
   @Get('users/:id')
-  public getGitHubUser(_: Request, res: Response): void {
-    res.send({ success: true, hello: 'world' })
+  public async getGitHubUser(req: Request<GetGitHubUserParams>, res: Response) {
+    const clientUser = await this.githubClient.getUser(req.params.id)
+    res.send(GitHubService.normalizeGitHubUser(clientUser))
   }
 }

@@ -1,4 +1,4 @@
-import axios, { AxiosStatic } from 'axios'
+import axios, { AxiosResponse, AxiosStatic } from 'axios'
 import config, { IConfig } from 'config'
 import { GitHubService } from '@src/services/github'
 
@@ -60,13 +60,13 @@ interface Repository {
   description?: string
 }
 
-export class GitHub {
+export class GitHubClient {
   constructor(protected request: AxiosStatic = axios) {}
 
-  public async getUser(user: string): Promise<GitHubUser> {
+  public async getUser(user: string): Promise<GitHubUserResponse> {
     const response = await this.request.get<GitHubUserResponse>(
       githubConfig.get('baseUrl') + '/users/' + user
     )
-    return GitHubService.normalizeGitHubUser(response.data)
+    return response.data
   }
 }
