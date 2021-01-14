@@ -4,7 +4,9 @@ export interface RequestConfig extends AxiosRequestConfig {}
 export interface Response<T = any> extends AxiosResponse {}
 
 export class Request {
-  constructor(private request = axios) {}
+  constructor(
+    private request = axios.create({ headers: { 'User-Agent': 'dev3-api' } })
+  ) {}
 
   public get<T>(url: string, config: RequestConfig = {}): Promise<Response<T>> {
     return this.request.get<T, Response<T>>(url, config)

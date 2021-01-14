@@ -4,6 +4,9 @@
       "connectionString": ""
     },
     "resources": {
+      "github": {
+        "baseUrl": "https://api.github.com/users"
+      },
       "aws": {
         "credentials": {
           "token": "",
