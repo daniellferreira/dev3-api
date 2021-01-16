@@ -1,5 +1,5 @@
 import config, { IConfig } from 'config'
-import { Request } from '@src/util/request'
+import { Request } from '@src/lib/request'
 
 export interface GitHubUserResponse {
   readonly login: string
