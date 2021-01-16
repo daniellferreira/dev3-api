@@ -1,8 +1,5 @@
-import axios, { AxiosResponse, AxiosStatic } from 'axios'
 import config, { IConfig } from 'config'
-import { GitHubService } from '@src/services/github'
-
-const githubConfig: IConfig = config.get('App.resources.github')
+import { Request } from '@src/util/request'
 
 export interface GitHubUserResponse {
   readonly login: string
@@ -60,8 +57,10 @@ interface Repository {
   description?: string
 }
 
+const githubConfig: IConfig = config.get('App.resources.github')
+
 export class GitHubClient {
-  constructor(protected request: AxiosStatic = axios) {}
+  constructor(protected request: Request = new Request()) {}
 
   public async getUser(user: string): Promise<GitHubUserResponse> {
     const response = await this.request.get<GitHubUserResponse>(
