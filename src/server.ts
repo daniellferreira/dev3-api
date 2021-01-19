@@ -31,10 +31,16 @@ export class SetupServer extends Server {
     }
   }
 
+  private setupServer(): void {
+    this.app.listen(this.port, () => {
+      console.info(`Server running on PID ${process.pid} port ${this.port}`)
+    })
+  }
+
   public async init(): Promise<void> {
     this.setupExpress()
     await this.setupControllers()
-    await this.app.listen(this.port)
+    this.setupServer()
   }
 
   public getApp(): Application {
