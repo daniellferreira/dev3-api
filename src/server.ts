@@ -3,10 +3,14 @@ import { Server } from '@overnightjs/core'
 import bodyParser from 'body-parser'
 import { Application } from 'express'
 import './util/module-alias'
+import * as database from '@src/util/database'
+import { Server as HttpServer } from 'http'
 
 export class SetupServer extends Server {
+  private server!: HttpServer
+
   constructor(private port = 3000) {
-    super()
+    super(process.env.NODE_ENV === 'dev')
   }
 
   private setupExpress(): void {
@@ -31,8 +35,12 @@ export class SetupServer extends Server {
     }
   }
 
+  private async setupDatabase(): Promise<void> {
+    await database.connect()
+  }
+
   private setupServer(): void {
-    this.app.listen(this.port, () => {
+    this.server = this.app.listen(this.port, () => {
       console.info(`Server running on PID ${process.pid} port ${this.port}`)
     })
   }
@@ -40,7 +48,13 @@ export class SetupServer extends Server {
   public async init(): Promise<void> {
     this.setupExpress()
     await this.setupControllers()
+    await this.setupDatabase()
     this.setupServer()
+  }
+
+  public async close(): Promise<void> {
+    await database.close()
+    this.server.close()
   }
 
   public getApp(): Application {
