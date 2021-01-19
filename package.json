@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daniellferreira/dev3-proj.git"
+    "url": "git+https://github.com/daniellferreira/dev3-api.git"
   },
   "author": "Daniel Lopes Ferreira",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/daniellferreira/dev3-proj/issues"
+    "url": "https://github.com/daniellferreira/dev3-api/issues"
   },
-  "homepage": "https://github.com/daniellferreira/dev3-proj#readme",
+  "homepage": "https://github.com/daniellferreira/dev3-api#readme",
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/config": "0.0.38",
