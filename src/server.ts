@@ -34,6 +34,7 @@ export class SetupServer extends Server {
   public async init(): Promise<void> {
     this.setupExpress()
     await this.setupControllers()
+    await this.app.listen(this.port)
   }
 
   public getApp(): Application {
