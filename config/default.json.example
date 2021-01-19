@@ -1,0 +1,25 @@
+{
+  "App": {
+    "db": {
+      "connectionString": ""
+    },
+    "resources": {
+      "github": {
+        "baseUrl": "https://api.github.com"
+      },
+      "aws": {
+        "credentials": {
+          "token": "",
+          "secret": ""
+        },
+        "services": {
+          "S3": {
+            "baseUrl": "",
+            "region": "",
+            "bucket": ""
+          }
+        }
+      }
+    }
+  }
+}
