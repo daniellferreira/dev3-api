@@ -1,8 +1,5 @@
-import {
-  GitHubClient,
-  GitHubUser,
-  GitHubUserResponse,
-} from '@src/clients/github'
+import { GitHubClient, GitHubUserResponse } from '@src/clients/github'
+import { GitHubUser } from '@src/models/githubuser'
 
 export class GitHubService {
   constructor(protected client = new GitHubClient()) {}
@@ -27,8 +24,8 @@ export class GitHubService {
       following,
     } = data
     return {
+      githubId: id,
       login,
-      id,
       name,
       company,
       blog,

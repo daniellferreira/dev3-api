@@ -36,27 +36,6 @@ export interface GitHubUserResponse {
   readonly updated_at: Date
 }
 
-export interface GitHubUser {
-  login: string
-  id: number
-  avatar: string
-  url: string
-  repos: Repository[]
-  name?: string
-  company?: string
-  blog: string
-  location?: any
-  email?: string
-  followers: number
-  following: number
-}
-
-interface Repository {
-  name: string
-  url: string
-  description?: string
-}
-
 const githubConfig: IConfig = config.get('App.resources.github')
 
 export class GitHubClient {

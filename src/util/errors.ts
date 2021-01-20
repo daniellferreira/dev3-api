@@ -2,18 +2,24 @@ export enum UserStatusCodes {
   BadRequest = 400,
   Unauthorized = 401,
   NotFound = 404,
+  Semantic = 422,
 }
 export enum InternalStatusCodes {
   InternalServerError = 500,
 }
+export type ErrorCause =
+  | 'VALIDATION_ERROR'
+  | 'RECORD_NOTFOUND'
+  | 'ROUTE_NOTFOUND'
 
 export class InternalError extends Error {
   constructor(
     public message: string,
-    protected code:
+    public statusCode:
       | InternalStatusCodes
       | UserStatusCodes = InternalStatusCodes.InternalServerError,
-    protected description?: string
+    public cause?: ErrorCause,
+    public details?: any
   ) {
     super(message)
     this.name = this.constructor.name
@@ -24,9 +30,10 @@ export class InternalError extends Error {
 export class UserError extends InternalError {
   constructor(
     public message: string,
-    protected code: UserStatusCodes = UserStatusCodes.BadRequest,
-    protected description?: string
+    public statusCode: UserStatusCodes = UserStatusCodes.BadRequest,
+    public cause?: ErrorCause,
+    public details?: any
   ) {
-    super(message, code, description)
+    super(message, statusCode, cause, details)
   }
 }

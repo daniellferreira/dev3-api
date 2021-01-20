@@ -5,11 +5,12 @@ import { Application } from 'express'
 import './util/module-alias'
 import * as database from '@src/util/database'
 import { Server as HttpServer } from 'http'
+import { ErrorHandler } from '@src/lib/errorHandler'
 
 export class SetupServer extends Server {
   private server!: HttpServer
 
-  constructor(private port = 3000) {
+  constructor(private port = 3002) {
     super(process.env.NODE_ENV === 'dev')
   }
 
@@ -18,7 +19,7 @@ export class SetupServer extends Server {
   }
 
   private async setupControllers(): Promise<void> {
-    let controllers = fs.readdirSync('./src/controllers')
+    let controllers: string[] = fs.readdirSync('./src/controllers')
 
     controllers = controllers
       .filter((ctr) => !ctr.startsWith('__') && ctr.endsWith('.ts'))
@@ -40,6 +41,7 @@ export class SetupServer extends Server {
   }
 
   private setupServer(): void {
+    this.app.use(ErrorHandler)
     this.server = this.app.listen(this.port, () => {
       console.info(`Server running on PID ${process.pid} port ${this.port}`)
     })
