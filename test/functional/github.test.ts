@@ -1,17 +1,24 @@
 import githubValidUserMock from '@test/mocks/github_valid_user.json'
 import githubNormalizedValidUserMock from '@test/mocks/github_normalized_valid_user.json'
-import axios from 'axios'
+import nock from 'nock'
 import { GitHubUser } from '@src/models/githubuser'
 
-jest.mock('axios')
-
 describe('GitHub test', () => {
-  const mockedAxios = axios as jest.Mocked<typeof axios>
-  it.skip('should return a valid GitHub user', async () => {
-    mockedAxios.get.mockResolvedValue({ data: githubValidUserMock })
+  it('should return a valid GitHub user', async () => {
+    const user = 'daniellferreira'
+
+    nock('https://api.github.com:443', {
+      encodedQueryParams: true,
+      reqheaders: {
+        'User-Agent': 'dev3-api',
+      },
+    })
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+      .get(`/users/${user}`)
+      .reply(200, githubValidUserMock)
 
     const { body, status } = await global.testRequest.get(
-      '/github/users/daniellferreira'
+      `/github/users/${user}`
     )
 
     expect(status).toBe(200)

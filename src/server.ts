@@ -10,7 +10,7 @@ import { ErrorHandler } from '@src/lib/errorHandler'
 export class SetupServer extends Server {
   private server!: HttpServer
 
-  constructor(private port = 3002) {
+  constructor(private port = 3000) {
     super(process.env.NODE_ENV === 'dev')
   }
 
