@@ -20,9 +20,8 @@ export class GitHubController {
   @Post('users')
   public async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = new GitHubUser(req.body)
-      const result = await user.save()
-      res.status(201).json(result)
+      const user = await this.service.createUser(req.body)
+      res.status(201).json(user)
     } catch (err) {
       next(err)
     }
