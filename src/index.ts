@@ -1,3 +1,10 @@
 import { SetupServer } from './server'
-const server = new SetupServer()
-server.init()
+
+import config, { IConfig } from 'config'
+const appConfig: IConfig = config.get('App')
+
+;(async (): Promise<void> => {
+  const server = new SetupServer(appConfig.get('port'))
+  await server.init()
+  server.start()
+})()

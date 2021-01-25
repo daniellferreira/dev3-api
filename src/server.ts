@@ -40,18 +40,17 @@ export class SetupServer extends Server {
     await database.connect()
   }
 
-  private setupServer(): void {
-    this.app.use(ErrorHandler)
-    this.server = this.app.listen(this.port, () => {
-      console.info(`Server running on PID ${process.pid} port ${this.port}`)
-    })
-  }
-
   public async init(): Promise<void> {
     this.setupExpress()
     await this.setupControllers()
     await this.setupDatabase()
-    this.setupServer()
+  }
+
+  public start(): void {
+    this.app.use(ErrorHandler)
+    this.server = this.app.listen(this.port, () => {
+      console.info(`Server running on PID ${process.pid} port ${this.port}`)
+    })
   }
 
   public async close(): Promise<void> {
