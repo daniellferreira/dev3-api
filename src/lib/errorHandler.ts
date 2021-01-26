@@ -7,37 +7,71 @@ import {
   InternalError,
 } from '@src/util/errors'
 
-const detailMessageByKind = new Map<string, string>(
+interface ErrorResponse {
+  cause?: ErrorCause
+  status: UserStatusCodes | InternalStatusCodes
+  message: string
+}
+
+const validationError: ErrorResponse = {
+  cause: 'VALIDATION_ERROR',
+  message: 'There are validation errors',
+  status: UserStatusCodes.Semantic,
+}
+const detailErrorByType = new Map<string, ErrorResponse>(
   Object.entries({
-    '': 'Invalid kind of error',
-    required: 'Required field',
+    internal: {
+      message: 'Internal Error. Something went wrong!',
+      status: InternalStatusCodes.InternalServerError,
+    },
+    ValidationError: validationError,
+    MongoError: validationError,
   })
 )
 
+const detailFieldErrorByKind = new Map<string, string>(
+  Object.entries({
+    '': 'Invalid kind of error',
+    required: 'Required field',
+    unique: 'There is already a record with the same value',
+  })
+)
+
+class HandlerError extends InternalError {
+  keyPattern: any
+}
+
 export const ErrorHandler = (
-  err: InternalError,
+  err: HandlerError,
   _: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  let details: any = err.details
-  let cause: ErrorCause | any = err.cause
-  let message: string = err.message || 'Internal Error. Something went wrong!'
-  let statusCode: UserStatusCodes | InternalStatusCodes =
-    err.statusCode || InternalStatusCodes.InternalServerError
+  const { cause, status, message }: ErrorResponse =
+    detailErrorByType.get(err.name) ||
+    (detailErrorByType.get('internal') as ErrorResponse)
 
-  if (err instanceof mongoose.Error.ValidationError) {
-    if (err.errors) {
-      details = {}
-      Object.keys(err.errors).forEach((fieldName) => {
-        const errorKind: string = err.errors[fieldName]?.kind || ''
-        details[fieldName] = detailMessageByKind.get(errorKind)
-      })
-    }
-    cause = 'VALIDATION_ERROR'
-    statusCode = UserStatusCodes.Semantic
-    message = 'There are validation errors'
+  const details = new Map<string, string>()
+  if (err instanceof mongoose.Error.ValidationError && err.errors) {
+    Object.keys(err.errors).forEach((fieldName) => {
+      const errorKind: string = err.errors[fieldName]?.kind || ''
+      details.set(fieldName, detailFieldErrorByKind.get(errorKind) as string)
+    })
+  }
+  if (err instanceof mongoose.mongo.MongoError && err.keyPattern) {
+    const errorCode = parseInt(err.code as string, 10)
+    const errorKind = [11000, 11001].includes(errorCode) ? 'unique' : ''
+    const errorMessage = detailFieldErrorByKind.get(errorKind) as string
+
+    Object.keys(err.keyPattern).forEach((fieldName) => {
+      details.set(fieldName, errorMessage)
+    })
   }
 
-  res.status(statusCode).json({ message, cause, details })
+  res.status(status).json({
+    message,
+    cause,
+    errors: Object.fromEntries(details),
+    original: process.env.NODE_ENV === 'dev' ? err : undefined,
+  })
 }

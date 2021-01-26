@@ -71,7 +71,7 @@ describe('GitHub test', () => {
         const expectedResponse = {
           message: 'There are validation errors',
           cause: 'VALIDATION_ERROR',
-          details: {
+          errors: {
             login: 'Required field',
           },
         }
